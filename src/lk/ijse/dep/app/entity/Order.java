@@ -9,7 +9,6 @@ import java.util.Date;
 public class Order extends SuperEntity{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
     @Temporal(TemporalType.DATE)
     private Date date;
@@ -17,8 +16,7 @@ public class Order extends SuperEntity{
     @JoinColumn(name = "customerId" , referencedColumnName = "id")
     private Customer customerId;
 
-    public Order(String id, java.sql.Date date, String customerId) {
-
+    public Order() {
     }
 
     public Order(String id, Date date, Customer customerId) {

@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public class CrudDAOImpl<T extends SuperEntity, ID extends Serializable> implements CrudDAO<T, ID> {
 
-    private Session session;
+    protected Session session;
     private Class<T> entity;
 
     public CrudDAOImpl(){

@@ -124,7 +124,7 @@ public class ViewOrderFormController {
             txtOrderID.setText(orderDTO.getId());
             txtOrderDate.setValue(orderDTO.getDate());
 
-            txtCustomerName.setText(manageCustomersBO.findCustomer(orderDTO.getCustomerId()).getName());
+            txtCustomerName.setText(manageCustomersBO.findCustomer(orderDTO.getCustomer()+"").getName());
 
 
             List<OrderDetailDTO> orderDetailDTOS = orderDTO.getOrderDetailDTOS();

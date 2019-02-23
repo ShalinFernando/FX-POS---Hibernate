@@ -1,5 +1,7 @@
 package lk.ijse.dep.app.dto;
 
+import lk.ijse.dep.app.entity.Customer;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,16 +10,16 @@ public class OrderDTO extends SuperDTO{
 
     private String id;
     private LocalDate date;
-    private String customerId;
+    private CustomerDTO customer;
     private List<OrderDetailDTO> orderDetailDTOS = new ArrayList<>();
 
     public OrderDTO() {
     }
 
-    public OrderDTO(String id, LocalDate date, String customerId, List<OrderDetailDTO> orderDetailDTOS) {
+    public OrderDTO(String id, LocalDate date, CustomerDTO customer, List<OrderDetailDTO> orderDetailDTOS) {
         this.id = id;
         this.date = date;
-        this.customerId = customerId;
+        this.customer = customer;
         this.orderDetailDTOS = orderDetailDTOS;
     }
 
@@ -37,12 +39,12 @@ public class OrderDTO extends SuperDTO{
         this.date = date;
     }
 
-    public String getCustomerId() {
-        return customerId;
+    public CustomerDTO getCustomer() {
+        return customer;
     }
 
-    public void setCustomerId(String customerId) {
-        this.customerId = customerId;
+    public void setCustomer(CustomerDTO customer) {
+        this.customer = customer;
     }
 
     public List<OrderDetailDTO> getOrderDetailDTOS() {
@@ -58,7 +60,7 @@ public class OrderDTO extends SuperDTO{
         return "OrderDTO{" +
                 "id='" + id + '\'' +
                 ", date=" + date +
-                ", customerId='" + customerId + '\'' +
+                ", customer=" + customer +
                 ", orderDetailDTOS=" + orderDetailDTOS +
                 '}';
     }

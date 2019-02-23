@@ -29,6 +29,7 @@ import lk.ijse.dep.app.dto.CustomerDTO;
 import lk.ijse.dep.app.dto.ItemDTO;
 import lk.ijse.dep.app.dto.OrderDTO;
 import lk.ijse.dep.app.dto.OrderDetailDTO;
+import lk.ijse.dep.app.entity.Customer;
 import lk.ijse.dep.app.view.util.OrderDetailTM;
 
 import java.io.IOException;
@@ -229,7 +230,8 @@ public class PlaceOrderFormController {
             orderDetailDTOS.add(new OrderDetailDTO(item.getCode(), item.getDescription(), item.getQty(), item.getUnitPrice()));
         }
         try {
-            manageOrdersBO.createOrder(new OrderDTO(txtOrderID.getText(), txtOrderDate.getValue(), txtCustomerId.getText(), orderDetailDTOS));
+            CustomerDTO customer =  manageCustomersBO.findCustomer(txtCustomerId.getText());
+            manageOrdersBO.createOrder(new OrderDTO(txtOrderID.getText(), txtOrderDate.getValue(),customer , orderDetailDTOS));
         } catch (Exception e) {
             Logger.getLogger("").log(Level.SEVERE, null, e);
         }

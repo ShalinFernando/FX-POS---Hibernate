@@ -21,24 +21,12 @@ public class OrderDetail extends SuperEntity {
     public OrderDetail() {
     }
 
-    public OrderDetail(OrderDetailPK orderDetailPK, int qty, double unitPrice) {
+    public OrderDetail(OrderDetailPK orderDetailPK, int qty, double unitPrice, Order order, Item item) {
         this.orderDetailPK = orderDetailPK;
         this.qty = qty;
         this.unitPrice = unitPrice;
-    }
-
-    public OrderDetail(String orderId, String itemCode, int qty, double unitPrice) {
-        this.orderDetailPK = new OrderDetailPK(orderId, itemCode);
-        this.qty = qty;
-        this.unitPrice = unitPrice;
-    }
-
-    public Order getOrder() {
-        return order;
-    }
-
-    public Item getItem() {
-        return item;
+        this.order = order;
+        this.item = item;
     }
 
     public OrderDetailPK getOrderDetailPK() {
@@ -64,4 +52,21 @@ public class OrderDetail extends SuperEntity {
     public void setUnitPrice(double unitPrice) {
         this.unitPrice = unitPrice;
     }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
+    public Item getItem() {
+        return item;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
+    }
+
 }
