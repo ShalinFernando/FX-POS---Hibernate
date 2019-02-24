@@ -70,7 +70,6 @@ public class SearchOrderFormController {
     private void txtOrderId_OnKeyReleased(KeyEvent keyEvent) {
 
         ObservableList<OrderTM> tempList = FXCollections.observableArrayList();
-//        System.out.println("TEST : " + olOrders);
         for (OrderTM olOrder : olOrders) {
             if (olOrder.getOrderId().startsWith(txtSearchOrder.getText())){
                 tempList.add(olOrder);

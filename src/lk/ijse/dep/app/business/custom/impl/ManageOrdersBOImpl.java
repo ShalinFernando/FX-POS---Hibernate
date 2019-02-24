@@ -3,14 +3,12 @@ package lk.ijse.dep.app.business.custom.impl;
 import lk.ijse.dep.app.business.Converter;
 import lk.ijse.dep.app.business.custom.ManageOrdersBO;
 import lk.ijse.dep.app.dao.DAOFactory;
-import lk.ijse.dep.app.dao.custom.ItemDAO;
-import lk.ijse.dep.app.dao.custom.OrderDAO;
-import lk.ijse.dep.app.dao.custom.OrderDetailDAO;
-import lk.ijse.dep.app.dto.ItemDTO;
+import lk.ijse.dep.app.dao.custom.*;
+import lk.ijse.dep.app.dto.CustomerDTO;
 import lk.ijse.dep.app.dto.OrderDTO;
 import lk.ijse.dep.app.dto.OrderDTO2;
 import lk.ijse.dep.app.dto.OrderDetailDTO;
-import lk.ijse.dep.app.entity.Customer;
+import lk.ijse.dep.app.entity.CustomEntity;
 import lk.ijse.dep.app.entity.Item;
 import lk.ijse.dep.app.entity.Order;
 import lk.ijse.dep.app.entity.OrderDetail;
@@ -18,23 +16,45 @@ import lk.ijse.dep.app.util.HibernateUtil;
 import org.hibernate.Session;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ManageOrdersBOImpl implements ManageOrdersBO {
     private OrderDAO orderDAO;
     private ItemDAO itemDAO;
     private OrderDetailDAO orderDetailDAO;
+    private QueryDAO queryDAO;
+    private CustomerDAO customerDAO;
 
     public ManageOrdersBOImpl() {
 
         orderDAO = DAOFactory.getInstance().getDAO(DAOFactory.DAOTypes.ORDER);
         itemDAO = DAOFactory.getInstance().getDAO(DAOFactory.DAOTypes.ITEM);
         orderDetailDAO = DAOFactory.getInstance().getDAO(DAOFactory.DAOTypes.ORDER_DETAIL);
+        queryDAO = DAOFactory.getInstance().getDAO(DAOFactory.DAOTypes.QUERY);
+        customerDAO = DAOFactory.getInstance().getDAO(DAOFactory.DAOTypes.CUSTOMER);
     }
 
     @Override
     public List<OrderDTO2> getOrdersWithCustomerNamesAndTotals() throws Exception {
-        return null;
+        Session mySession = HibernateUtil.getSessionFactory().openSession();
+        try (Session session = mySession) {
+            queryDAO.setSession(session);
+
+            session.beginTransaction();
+            List<CustomEntity> alt = queryDAO.findAllOrdersWithCustomerNameAndTotal();
+
+            ArrayList<OrderDTO2> objects = new ArrayList<>();
+            for (CustomEntity customEntity : alt) {
+                objects.add(new OrderDTO2(customEntity.getOrderId(), customEntity.getOrderDate().toLocalDate(), customEntity.getCustomerId(), customEntity.getCustomerName(), customEntity.getTotal()));
+            }
+
+            session.getTransaction().commit();
+            return objects;
+        } catch (Exception ex) {
+            mySession.getTransaction().rollback();
+            throw ex;
+        }
     }
 
     @Override
@@ -105,18 +125,46 @@ public class ManageOrdersBOImpl implements ManageOrdersBO {
 
     @Override
     public OrderDTO findOrder(String orderId) throws Exception {
+        CustomerDTO customerDTO;
+        List<OrderDetailDTO> dtoList = new ArrayList<>();
+
+        boolean result = false;
         Session mySession = HibernateUtil.getSessionFactory().openSession();
-        try {
-            Session session = mySession;
-            orderDAO.setSession(session);
+        try (Session session = mySession) {
+            queryDAO.setSession(session);
             session.beginTransaction();
-            OrderDTO orderDTO = orderDAO.find(orderId).map(Converter::<OrderDTO>getDTO).orElse(null);
+            List<CustomEntity> odwtid = queryDAO.findOrderDetailsWithItemDescriptions(orderId);
+            OrderDTO orderDTO = null;
+            result = true;
+            if (result) {
+
+                customerDAO.setSession(session);
+                customerDTO = customerDAO.find("c001").map(Converter::<CustomerDTO>getDTO).orElse(null);
+                System.out.println(customerDTO.getName());
+                result = true;
+                if (result) {
+                    orderDetailDAO.setSession(session);
+                    List<OrderDetail> orderDetails = orderDetailDAO.find(orderId);
+                    for (OrderDetail orderDetail : orderDetails) {
+                        System.out.println(orderDetail.getOrder().getId() + " " + orderDetail.getItem().getDescription() + " " + orderDetail.getQty() + " " + orderDetail.getUnitPrice());
+                        dtoList.add(new OrderDetailDTO(orderDetail.getOrder().getId(), orderDetail.getItem().getDescription(), orderDetail.getQty(), orderDetail.getUnitPrice()));
+                    }
+
+                    for (CustomEntity customEntity : odwtid) {
+                        orderDTO = new OrderDTO(customEntity.getOrderId(), customEntity.getOrderDate().toLocalDate(), customerDTO, dtoList);
+                    }
+
+                } else {
+                    mySession.getTransaction().rollback();
+                }
+            } else {
+                mySession.getTransaction().rollback();
+            }
             session.getTransaction().commit();
             return orderDTO;
-        } catch (Exception e) {
+        } catch (Exception ex) {
             mySession.getTransaction().rollback();
-            throw e;
+            throw ex;
         }
     }
-
 }

@@ -29,6 +29,14 @@ public class OrderDetail extends SuperEntity {
         this.item = item;
     }
 
+    public OrderDetail(String id, String code, int qty, double unitPrice) {
+        this.orderDetailPK = new OrderDetailPK(id,code);
+        this.qty = qty;
+        this.unitPrice = unitPrice;
+        this.order = order;
+        this.item = item;
+    }
+
     public OrderDetailPK getOrderDetailPK() {
         return orderDetailPK;
     }

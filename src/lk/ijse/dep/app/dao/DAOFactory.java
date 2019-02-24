@@ -35,6 +35,8 @@ public class DAOFactory {
                 return (T) new OrderDAOImpl();
             case ORDER_DETAIL:
                 return (T) new OrderDetailDAOImpl();
+            case QUERY:
+                return (T) new QueryDAOImpl();
             default:
                 return null;
         }

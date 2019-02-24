@@ -8,8 +8,8 @@ import java.util.Optional;
 
 public interface QueryDAO extends SuperDAO {
 
-    Optional<List<CustomEntity>> findOrderDetailsWithItemDescriptions(String orderId) throws Exception;
+    List<CustomEntity> findOrderDetailsWithItemDescriptions(String orderId) throws Exception;
 
-    Optional<List<CustomEntity>> findAllOrdersWithCustomerNameAndTotal() throws Exception;
+    List<CustomEntity> findAllOrdersWithCustomerNameAndTotal() throws Exception;
 
 }
